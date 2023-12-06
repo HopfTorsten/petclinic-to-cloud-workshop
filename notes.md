@@ -38,14 +38,15 @@ immer darauf hinzuweisen.**
 - Java (bspw. openjdk)
 - Maven
 - node & npm
+- [aws cli](https://docs.aws.amazon.com/de_de/cli/latest/userguide/getting-started-install.html) 
 - angular-cli (via npm)
-- aws cli (via npm)
 - aws cdk (via npm)
 
 ```shell
-npm install -g aws-cli
 npm install -g aws-cdk
 npm install -g @angular/cli@latest
+
+git clone https://github.com/HopfTorsten/petclinic-to-cloud-workshop.git
 ```
 
 # Aufstellungsarbeit
