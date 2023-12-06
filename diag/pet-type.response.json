@@ -1,0 +1,26 @@
+[
+  {
+    "name": "cat",
+    "id": 1
+  },
+  {
+    "name": "dog",
+    "id": 2
+  },
+  {
+    "name": "lizard",
+    "id": 3
+  },
+  {
+    "name": "snake",
+    "id": 4
+  },
+  {
+    "name": "bird",
+    "id": 5
+  },
+  {
+    "name": "hamster",
+    "id": 6
+  }
+]
