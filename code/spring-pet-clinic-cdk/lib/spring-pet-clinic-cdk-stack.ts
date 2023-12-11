@@ -14,7 +14,7 @@ export class SpringPetClinicCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
-        const applicationName="PetClinicRest-EB-App";
+        const applicationName = "PetClinicRest-EB-App";
         //Define an VPC for the EBS instances
         const vpc = new ec2.Vpc(this, "PetClinicCdkVpc");
 
@@ -22,11 +22,14 @@ export class SpringPetClinicCdkStack extends cdk.Stack {
         const app = new elasticbeanstalk.CfnApplication(this, "PetClinicRestApplication", {
             applicationName
         });
+        const s3Bucket = s3.Bucket.fromBucketArn(this, "S3BucketArtifacts", "arn:aws:s3:::pet-clinic-workshop-bucket");
+
+
         // Define the application executable that should be used in the current Version deployment
         const appVersionProps = new elasticbeanstalk.CfnApplicationVersion(this, "PetClinicRestAppVersion-1", {
             applicationName,
             sourceBundle: {
-                s3Bucket: "pet-clinic-workshop-bucket",
+                s3Bucket: s3Bucket.bucketName,
                 s3Key: "spring-petclinic-rest-3.0.2.jar"
             }
         });
@@ -41,7 +44,6 @@ export class SpringPetClinicCdkStack extends cdk.Stack {
         ebInstanceRole.addManagedPolicy(managedPolicy);
 
         // Allow the EBS Role to access the S3 Bucket with the jar-File
-        const s3Bucket = s3.Bucket.fromBucketArn(this,"S3BucketArtifacts","arn:aws:s3:::pet-clinic-workshop-bucket");
         s3Bucket.grantRead(ebInstanceRole);
         const profileName = "PetClinicRestCdkDemoProfile";
 
@@ -100,9 +102,7 @@ export class SpringPetClinicCdkStack extends cdk.Stack {
         });
 
         // create an origin access identity, which is allowed to read from our web hosting bucket
-        const originAccessIdentity = new cloudfront.OriginAccessIdentity(this, "PetClinicCdkDemoOriginAccess", {
-
-        });
+        const originAccessIdentity = new cloudfront.OriginAccessIdentity(this, "PetClinicCdkDemoOriginAccess", {});
 
         hostingBucket.grantRead(originAccessIdentity);
 
@@ -110,7 +110,7 @@ export class SpringPetClinicCdkStack extends cdk.Stack {
         const distribution = new cloudfront.Distribution(this, "PetClinicCdkDemoDistribution", {
             defaultRootObject: "index.html",
             defaultBehavior: {
-                origin: new cforigin.S3Origin(hostingBucket, { originAccessIdentity }),
+                origin: new cforigin.S3Origin(hostingBucket, {originAccessIdentity}),
             },
             // Angular Routing behavior
             errorResponses: [{
@@ -120,6 +120,10 @@ export class SpringPetClinicCdkStack extends cdk.Stack {
             },
                 {
                     httpStatus: 404,
+                    responseHttpStatus: 200,
+                    responsePagePath: "/index.html"
+                }, {
+                    httpStatus: 402,
                     responseHttpStatus: 200,
                     responsePagePath: "/index.html"
                 }]
